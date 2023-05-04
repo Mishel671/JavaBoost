@@ -23,7 +23,11 @@ interface FirebaseRepository {
 
     suspend fun verificationEmail(): Resource<Unit>
 
+    suspend fun resetPassword(password: String): Resource<Unit>
+
     suspend fun updateProfileName(name: String): Resource<Unit>
 
     suspend fun updateProfileImage(image: Bitmap): Resource<Unit>
+
+    suspend fun changePassword(oldPassword: String, newPassword: String): Resource<Unit>
 }

@@ -1,10 +1,11 @@
 package com.dzyuba.javaboost.data
 
-import android.R.attr.bitmap
 import android.graphics.Bitmap
 import com.dzyuba.javaboost.domain.FirebaseRepository
 import com.dzyuba.javaboost.domain.Resource
 import com.dzyuba.javaboost.domain.entities.User
+import com.google.firebase.auth.EmailAuthCredential
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth.AuthStateListener
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
@@ -49,15 +50,15 @@ class FirebaseRepositoryImpl @Inject constructor(
     override suspend fun loadUser(): Resource<User> = suspendCoroutine { cont ->
         firebaseAuth.currentUser?.let {
             it.reload().addOnCompleteListener { task ->
-                if (task.isSuccessful) {
+                if (task.isSuccessful)
                     cont.resume(Resource.success(firebaseAuth.currentUser!!.toUser()))
-                } else {
+                else
                     cont.resume(Resource.error(task.exception.toThrowable()))
-                }
             }
         }
         cont.resume(Resource.error(Throwable("User not registered")))
     }
+
 
     override fun subscribeFirebaseUserChanged() {
         firebaseAuth.addAuthStateListener(authListener)
@@ -75,11 +76,10 @@ class FirebaseRepositoryImpl @Inject constructor(
                 email,
                 password
             ).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
+                if (task.isSuccessful)
                     cont.resume(Resource.success(Unit))
-                } else {
+                else
                     cont.resume(Resource.error(task.exception.toThrowable()))
-                }
             }
         }
 
@@ -89,11 +89,10 @@ class FirebaseRepositoryImpl @Inject constructor(
                 email,
                 password
             ).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
+                if (task.isSuccessful)
                     cont.resume(Resource.success(Unit))
-                } else {
+                else
                     cont.resume(Resource.error(task.exception.toThrowable()))
-                }
             }
         }
 
@@ -102,14 +101,22 @@ class FirebaseRepositoryImpl @Inject constructor(
         firebaseAuth.currentUser?.let {
             it.sendEmailVerification()
                 .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
+                    if (task.isSuccessful)
                         cont.resume(Resource.success(Unit))
-                    } else {
+                    else
                         cont.resume(Resource.error(task.exception.toThrowable()))
-                    }
                 }
         }
         cont.resume(Resource.error(Throwable("User not registered")))
+    }
+
+    override suspend fun resetPassword(email: String): Resource<Unit> = suspendCoroutine { cont ->
+        firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
+            if (task.isSuccessful)
+                cont.resume(Resource.success(Unit))
+            else
+                cont.resume(Resource.error(task.exception.toThrowable()))
+        }
     }
 
     override suspend fun updateProfileName(name: String): Resource<Unit> =
@@ -119,11 +126,11 @@ class FirebaseRepositoryImpl @Inject constructor(
                     displayName = name
                 }
                 it.updateProfile(profileUpdates).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
+                    if (task.isSuccessful)
                         cont.resume(Resource.success(Unit))
-                    } else {
+                    else
                         cont.resume(Resource.error(task.exception.toThrowable()))
-                    }
+
                 }
             }
             cont.resume(Resource.error(Throwable("User not registered")))
@@ -138,7 +145,7 @@ class FirebaseRepositoryImpl @Inject constructor(
             image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
             val data: ByteArray = baos.toByteArray()
             imagesRef.putBytes(data).addOnCompleteListener { loadTask ->
-                if (loadTask.isSuccessful) {
+                if (loadTask.isSuccessful)
                     imagesRef.downloadUrl.addOnCompleteListener { uriTask ->
                         if (uriTask.isSuccessful) {
                             firebaseAuth.currentUser?.let {
@@ -147,21 +154,37 @@ class FirebaseRepositoryImpl @Inject constructor(
                                 }
                                 it.updateProfile(profileUpdates)
                                     .addOnCompleteListener { updateTask ->
-                                        if (updateTask.isSuccessful) {
+                                        if (updateTask.isSuccessful)
                                             cont.resume(Resource.success(Unit))
-                                        } else {
+                                        else
                                             cont.resume(Resource.error(uriTask.exception.toThrowable()))
-                                        }
                                     }
                             }
                             cont.resume(Resource.error(Throwable("User not registered")))
-                        } else {
+                        } else
                             cont.resume(Resource.error(uriTask.exception.toThrowable()))
-                        }
                     }
-                } else {
+                else
                     cont.resume(Resource.error(loadTask.exception.toThrowable()))
+            }
+        }
+
+    override suspend fun changePassword(oldPassword: String, newPassword: String): Resource<Unit> =
+        suspendCoroutine { cont ->
+            firebaseAuth.currentUser?.let {
+                val credential = EmailAuthProvider.getCredential(it.email!!, oldPassword)
+                it.reauthenticate(credential).addOnCompleteListener { reauthenticateTask ->
+                    if (reauthenticateTask.isSuccessful)
+                        it.updatePassword(newPassword).addOnCompleteListener { passwordTask ->
+                            if (passwordTask.isSuccessful)
+                                cont.resume(Resource.success(Unit))
+                            else
+                                cont.resume(Resource.error(passwordTask.exception.toThrowable()))
+                        }
+                    else
+                        cont.resume(Resource.error(reauthenticateTask.exception.toThrowable()))
                 }
             }
+            cont.resume(Resource.error(Throwable("User not registered")))
         }
 }
