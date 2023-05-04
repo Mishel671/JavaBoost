@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.dzyuba.javaboost.R
 import com.dzyuba.javaboost.databinding.ActivityMainBinding
+import com.dzyuba.javaboost.presentation.splash.SplashFragment
 
 class MainActivity : AppCompatActivity() {
 

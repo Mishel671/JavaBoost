@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "424603862363",
+    "project_id": "javaboost-dcef3",
+    "storage_bucket": "javaboost-dcef3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:424603862363:android:ffbbe6db0852f410de867e",
+        "android_client_info": {
+          "package_name": "com.dzyuba.javaboost"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "424603862363-qn58j1uan5bvicfc0p1d4jl8mv4pqh71.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dzyuba.javaboost",
+            "certificate_hash": "6beb2e2d45cc5996edd689ceca7424cb5151ce0a"
+          }
+        },
+        {
+          "client_id": "424603862363-1jpcfrik56j26rboi8946dbbs8hdqkj9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnFLE7tiEkW129mjwobuuCM-X6b69nmWw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "424603862363-1jpcfrik56j26rboi8946dbbs8hdqkj9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

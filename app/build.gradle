@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.gms.google-services'
     id 'kotlin-kapt'
 }
 
@@ -38,7 +39,7 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.8.10'
+    implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -53,6 +54,19 @@ dependencies {
     //Dagger
     implementation "com.google.dagger:dagger:2.43.2"
     kapt "com.google.dagger:dagger-compiler:2.43.2"
+
+    //Firebase
+    implementation platform('com.google.firebase:firebase-bom:32.0.0')
+
+    //Firebase authentication
+    implementation 'com.google.firebase:firebase-auth-ktx'
+
+    //Firebase realtime database
+    implementation 'com.google.firebase:firebase-database-ktx'
+
+    //Firebase storage
+    implementation 'com.google.firebase:firebase-storage-ktx'
+
 
     //Lottie
     implementation "com.airbnb.android:lottie:3.4.0"
