@@ -5,7 +5,6 @@ import com.dzyuba.javaboost.domain.entities.User
 import kotlinx.coroutines.flow.StateFlow
 
 interface FirebaseRepository {
-    val userFlow: StateFlow<User?>
 
     fun isAuthenticated(): Boolean
 
@@ -13,17 +12,15 @@ interface FirebaseRepository {
 
     suspend fun loadUser(): Resource<User>
 
-    fun subscribeFirebaseUserChanged()
-
-    fun unsubscribeFirebaseUserChanged()
-
     suspend fun registration(email: String, password: String): Resource<Unit>
 
-    suspend fun signIn(email: String, password: String): Resource<Unit>
+    fun logout()
+
+    suspend fun signIn(email: String, password: String): Resource<User>
 
     suspend fun verificationEmail(): Resource<Unit>
 
-    suspend fun resetPassword(password: String): Resource<Unit>
+    suspend fun resetPassword(email: String): Resource<Unit>
 
     suspend fun updateProfileName(name: String): Resource<Unit>
 

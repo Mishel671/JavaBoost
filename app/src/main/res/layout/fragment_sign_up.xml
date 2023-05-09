@@ -5,7 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context=".presentation.signin.SignInFragment">
+    tools:context=".presentation.signup.SignUpFragment">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="@string/sign_up_title"
+        android:textColor="@color/white"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilEmail"
@@ -24,7 +37,7 @@
             style="@style/CustomEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/sign_in_email"
+            android:hint="@string/sign_up_email"
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -46,40 +59,40 @@
             style="@style/CustomEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/sign_in_password"
+            android:hint="@string/sign_up_password"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/btnForgotPassword"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilRepeatPassword"
+        style="@style/CustomTextInputLayoutStyle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/sign_in_forgot_password"
-        android:textColor="@color/blue"
-        app:layout_constraintEnd_toEndOf="@id/tilPassword"
-        app:layout_constraintTop_toBottomOf="@id/tilPassword" />
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tilPassword"
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@color/white">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etRepeatPassword"
+            style="@style/CustomEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/sign_up_repeat_password"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSignIn"
+        android:id="@+id/btnCreate"
         style="@style/WhiteButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="10dp"
-        android:text="@string/sign_in_enter"
-        app:layout_constraintBottom_toTopOf="@id/btnRegistration"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnRegistration"
-        style="@style/BlueCornersButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="20dp"
-        android:text="@string/sign_in_registration"
+        android:text="@string/sign_up_create"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

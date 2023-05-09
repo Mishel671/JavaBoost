@@ -3,17 +3,21 @@ package com.dzyuba.javaboost.presentation.splash
 import android.animation.Animator
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import com.dzyuba.javaboost.App
 import com.dzyuba.javaboost.R
 import com.dzyuba.javaboost.databinding.FragmentSplashBinding
 import com.dzyuba.javaboost.presentation.ViewModelFactory
+import com.dzyuba.javaboost.presentation.email_verified.EmailVerifiedFragment
+import com.dzyuba.javaboost.presentation.main.MainFragment
+import com.dzyuba.javaboost.presentation.nickname.NicknameFragment
 import com.dzyuba.javaboost.presentation.signin.SignInFragment
+import com.dzyuba.javaboost.util.showErrorAlert
 import javax.inject.Inject
 
 class SplashFragment : Fragment() {
@@ -21,6 +25,7 @@ class SplashFragment : Fragment() {
     private var _binding: FragmentSplashBinding? = null
     private val binding: FragmentSplashBinding
         get() = _binding ?: throw RuntimeException("FragmentSplashBinding == null")
+    private var animPlayed = false
 
     private val component by lazy {
         (requireActivity().application as App).componentApp
@@ -52,10 +57,6 @@ class SplashFragment : Fragment() {
         setUI()
     }
 
-    private fun setObservers() {
-        viewModel
-    }
-
     private fun setUI() {
         binding.loadingAnim.addAnimatorListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
@@ -69,12 +70,57 @@ class SplashFragment : Fragment() {
             }
 
             override fun onAnimationRepeat(animation: Animator) {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer, SignInFragment.newInstance())
-                    .commit()
+                if (viewModel.needScreen.value != null) {
+                    launchNeedFragment(viewModel.needScreen.value!!)
+                    binding.loadingAnim.pauseAnimation()
+                } else {
+                    animPlayed = true
+                }
             }
 
         })
+    }
+
+    private fun setObservers() {
+        viewModel.needScreen.observe(viewLifecycleOwner) {
+            if (animPlayed == true) {
+                launchNeedFragment(it)
+            }
+        }
+    }
+
+    private fun launchNeedFragment(needScreen: NeedScreen) {
+        when (needScreen) {
+            NeedScreen.SIGN_IN -> {
+                launchFragment(SignInFragment.newInstance(), true)
+            }
+            NeedScreen.EMAIL_VERIFIED -> {
+                launchFragment(SignInFragment.newInstanceToEmailVerified(), false,)
+            }
+            NeedScreen.NICKNAME -> {
+                launchFragment(NicknameFragment.newInstance(), true)
+            }
+            NeedScreen.MAIN_SCREEN -> {
+                launchFragment(MainFragment.newInstance(), true)
+            }
+            NeedScreen.ERROR -> {
+                showErrorAlert(needScreen.error ?: Throwable("Unknown error"), positiveAction = {
+                    viewModel.checkAuthentication()
+                    binding.loadingAnim.playAnimation()
+                })
+            }
+        }
+
+    }
+
+    private fun launchFragment(fragment: Fragment, withAnimation: Boolean) {
+        parentFragmentManager.beginTransaction().apply {
+            if (withAnimation) {
+                setCustomAnimations(R.anim.slide_enter_left, R.anim.slide_exit_left)
+            }
+            replace(R.id.fragmentContainer, fragment)
+
+        }.commit()
     }
 
     override fun onDestroyView() {

@@ -21,7 +21,6 @@ import kotlin.coroutines.suspendCoroutine
 
 
 class FirebaseRepositoryImpl @Inject constructor(
-
 ) : FirebaseRepository {
 
     private val firebaseAuth by lazy {
@@ -32,42 +31,22 @@ class FirebaseRepositoryImpl @Inject constructor(
         Firebase.storage
     }
 
-    private val _userFlow = MutableStateFlow<User?>(null)
-    override val userFlow = _userFlow.asStateFlow()
-    private var authJob: Job? = null
-
-    private val authListener = AuthStateListener { auth ->
-        authJob?.cancel()
-        authJob = CoroutineScope(Dispatchers.IO).launch {
-            _userFlow.emit(auth.currentUser?.toUser())
-        }
-    }
 
     override fun isAuthenticated() = firebaseAuth.currentUser != null
 
     override fun getUser() = firebaseAuth.currentUser!!.toUser()
 
     override suspend fun loadUser(): Resource<User> = suspendCoroutine { cont ->
-        firebaseAuth.currentUser?.let {
-            it.reload().addOnCompleteListener { task ->
+        if (firebaseAuth.currentUser != null) {
+            firebaseAuth.currentUser!!.reload().addOnCompleteListener { task ->
                 if (task.isSuccessful)
                     cont.resume(Resource.success(firebaseAuth.currentUser!!.toUser()))
                 else
                     cont.resume(Resource.error(task.exception.toThrowable()))
             }
+        } else {
+            cont.resume(Resource.error(Throwable("User not registered")))
         }
-        cont.resume(Resource.error(Throwable("User not registered")))
-    }
-
-
-    override fun subscribeFirebaseUserChanged() {
-        firebaseAuth.addAuthStateListener(authListener)
-    }
-
-    override fun unsubscribeFirebaseUserChanged() {
-        firebaseAuth.removeAuthStateListener(authListener)
-        authJob?.cancel()
-        authJob = null
     }
 
     override suspend fun registration(email: String, password: String) =
@@ -84,30 +63,34 @@ class FirebaseRepositoryImpl @Inject constructor(
         }
 
     override suspend fun signIn(email: String, password: String) =
-        suspendCoroutine<Resource<Unit>> { cont ->
+        suspendCoroutine<Resource<User>> { cont ->
             firebaseAuth.signInWithEmailAndPassword(
                 email,
                 password
             ).addOnCompleteListener { task ->
                 if (task.isSuccessful)
-                    cont.resume(Resource.success(Unit))
+                    cont.resume(Resource.success(task.result.user!!.toUser()))
                 else
                     cont.resume(Resource.error(task.exception.toThrowable()))
             }
         }
 
+    override fun logout() = firebaseAuth.signOut()
+
 
     override suspend fun verificationEmail(): Resource<Unit> = suspendCoroutine { cont ->
-        firebaseAuth.currentUser?.let {
-            it.sendEmailVerification()
+        if (firebaseAuth.currentUser != null) {
+            firebaseAuth.currentUser!!.sendEmailVerification()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful)
                         cont.resume(Resource.success(Unit))
                     else
                         cont.resume(Resource.error(task.exception.toThrowable()))
                 }
+
+        } else {
+            cont.resume(Resource.error(Throwable("User not registered")))
         }
-        cont.resume(Resource.error(Throwable("User not registered")))
     }
 
     override suspend fun resetPassword(email: String): Resource<Unit> = suspendCoroutine { cont ->
@@ -121,19 +104,19 @@ class FirebaseRepositoryImpl @Inject constructor(
 
     override suspend fun updateProfileName(name: String): Resource<Unit> =
         suspendCoroutine { cont ->
-            firebaseAuth.currentUser?.let {
+            if (firebaseAuth.currentUser != null) {
                 val profileUpdates = userProfileChangeRequest {
                     displayName = name
                 }
-                it.updateProfile(profileUpdates).addOnCompleteListener { task ->
+                firebaseAuth.currentUser!!.updateProfile(profileUpdates).addOnCompleteListener { task ->
                     if (task.isSuccessful)
                         cont.resume(Resource.success(Unit))
                     else
                         cont.resume(Resource.error(task.exception.toThrowable()))
-
                 }
+            } else {
+                cont.resume(Resource.error(Throwable("User not registered")))
             }
-            cont.resume(Resource.error(Throwable("User not registered")))
         }
 
     override suspend fun updateProfileImage(image: Bitmap): Resource<Unit> =
