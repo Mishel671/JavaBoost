@@ -44,14 +44,37 @@
     <string name="nickname_input_your_nickname">Введите ваш никнейм</string>
     <string name="nickname_input_many_symbols">Никнейм должен содержать до 16-ти символов</string>
 
+    <!--    Profile-->
+    <string name="profile_lessons">Уроки</string>
+    <string name="profile_learned_lessons">Пройденные уроки</string>
+    <string name="profile_settings">Настройки</string>
+    <string name="profile_change_nickname">Сменить никнейм</string>
+    <string name="profile_change_photo">Сменить фото</string>
+    <string name="profile_quit">Выйти</string>
+    <string name="profile_quit_title">Вы точно хотите выйти?</string>
+    <string name="profile_quit_desc">Подтвердите выход из аккаунта</string>
+
+    <!--    Lessons list-->
+    <string name="lessons_list_empty">Уроков не найдено</string>
+    <string name="lessons_list_description">Описание:\n%s</string>
+
+    <!--    Lesson detail-->
+    <string name="lesson_detail_set_rating">Оцените урок</string>
+    <string name="lesson_detail_your_rating">Ваша оценка: %.1f</string>
+    <string name="lesson_detail_middle_rating">Средняя оценка: %.1f</string>
+    <string name="lesson_detail_thanks_for_rate">Спасибо за вашу оценку!</string>
+
+
     <!--    Downloading-->
     <string name="succes">Успешно</string>
     <string name="loading_error">Ошибка загрузки</string>
     <string name="save_profile_error">Ошибка сохранения профиля</string>
+    <string name="unknown_value">Unknown value</string>
 
     <!--    Надписи действия/согласия/не согласия-->
     <string name="ok">OK</string>
     <string name="save">Сохранить</string>
+    <string name="accept">Подтвердить</string>
     <string name="retry">Повторить</string>
     <string name="send">Отправить</string>
     <string name="cancel">Отменить</string>

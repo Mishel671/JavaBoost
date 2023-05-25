@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dzyuba.javaboost.domain.FirebaseRepository
+import com.dzyuba.javaboost.domain.ProfileRepository
 import com.dzyuba.javaboost.domain.Resource
 import com.dzyuba.javaboost.util.isEmailValid
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ForgotPasswordViewModel @Inject constructor(
-    private val firebaseRepository: FirebaseRepository
+    private val profileRepository: ProfileRepository
 ) : ViewModel() {
 
     private val _resetPassword = MutableLiveData<Resource<Unit>>()
@@ -28,7 +28,7 @@ class ForgotPasswordViewModel @Inject constructor(
         if (email.isEmailValid()) {
             _resetPassword.value = Resource.loading()
             viewModelScope.launch(Dispatchers.IO) {
-                _resetPassword.postValue(firebaseRepository.resetPassword(email))
+                _resetPassword.postValue(profileRepository.resetPassword(email))
             }
         } else {
             _inputError.value = true

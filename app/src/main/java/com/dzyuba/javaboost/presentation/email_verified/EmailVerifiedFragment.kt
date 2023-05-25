@@ -7,18 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.core.os.bundleOf
-import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.dzyuba.javaboost.App
 import com.dzyuba.javaboost.R
 import com.dzyuba.javaboost.databinding.FragmentEmailVerifiedBinding
 import com.dzyuba.javaboost.presentation.ViewModelFactory
 import com.dzyuba.javaboost.presentation.nickname.NicknameFragment
-import com.dzyuba.javaboost.presentation.signin.SignInFragment
-import com.dzyuba.javaboost.presentation.signup.SignUpFragment
-import com.dzyuba.javaboost.presentation.signup.SignUpViewModel
 import com.dzyuba.javaboost.util.*
 import javax.inject.Inject
 
@@ -27,6 +21,8 @@ class EmailVerifiedFragment : Fragment() {
     private var _binding: FragmentEmailVerifiedBinding? = null
     private val binding: FragmentEmailVerifiedBinding
         get() = _binding ?: throw RuntimeException("FragmentEmailVerifiedBinding == null")
+
+    private val dialog by lazy { initProgressBar(layoutInflater, requireContext()) }
 
     private val component by lazy {
         (requireActivity().application as App).componentApp
@@ -39,7 +35,6 @@ class EmailVerifiedFragment : Fragment() {
         ViewModelProvider(this, viewModelFactory)[EmailVerifiedViewModel::class.java]
     }
 
-    private val dialog by lazy { initProgressBar(layoutInflater, requireContext()) }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -76,7 +71,7 @@ class EmailVerifiedFragment : Fragment() {
                         }
                         parentFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.slide_enter_left, R.anim.slide_exit_left)
-                            .replace(R.id.fragmentContainer, NicknameFragment.newInstance())
+                            .replace(R.id.fragmentContainer, NicknameFragment.launchRegistrationMode())
                             .commit()
 
                     } else {

@@ -7,13 +7,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import com.dzyuba.javaboost.App
 import com.dzyuba.javaboost.R
 import com.dzyuba.javaboost.databinding.FragmentSplashBinding
 import com.dzyuba.javaboost.presentation.ViewModelFactory
-import com.dzyuba.javaboost.presentation.email_verified.EmailVerifiedFragment
 import com.dzyuba.javaboost.presentation.main.MainFragment
 import com.dzyuba.javaboost.presentation.nickname.NicknameFragment
 import com.dzyuba.javaboost.presentation.signin.SignInFragment
@@ -98,7 +96,7 @@ class SplashFragment : Fragment() {
                 launchFragment(SignInFragment.newInstanceToEmailVerified(), false,)
             }
             NeedScreen.NICKNAME -> {
-                launchFragment(NicknameFragment.newInstance(), true)
+                launchFragment(NicknameFragment.launchRegistrationMode(), true)
             }
             NeedScreen.MAIN_SCREEN -> {
                 launchFragment(MainFragment.newInstance(), true)

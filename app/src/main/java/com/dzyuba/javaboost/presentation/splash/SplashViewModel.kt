@@ -4,13 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dzyuba.javaboost.domain.FirebaseRepository
+import com.dzyuba.javaboost.domain.ProfileRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SplashViewModel @Inject constructor(
-    private val repository: FirebaseRepository
+    private val repository: ProfileRepository
 ) : ViewModel() {
 
     private val _needScreen = MutableLiveData<NeedScreen>()

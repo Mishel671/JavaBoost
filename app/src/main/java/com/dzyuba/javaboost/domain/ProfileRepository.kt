@@ -1,10 +1,10 @@
 package com.dzyuba.javaboost.domain
 
 import android.graphics.Bitmap
+import com.dzyuba.javaboost.domain.entities.LessonShort
 import com.dzyuba.javaboost.domain.entities.User
-import kotlinx.coroutines.flow.StateFlow
 
-interface FirebaseRepository {
+interface ProfileRepository {
 
     fun isAuthenticated(): Boolean
 
@@ -27,4 +27,6 @@ interface FirebaseRepository {
     suspend fun updateProfileImage(image: Bitmap): Resource<Unit>
 
     suspend fun changePassword(oldPassword: String, newPassword: String): Resource<Unit>
+
+    suspend fun updateConnection()
 }

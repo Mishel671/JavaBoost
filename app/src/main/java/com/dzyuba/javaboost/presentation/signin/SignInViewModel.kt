@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dzyuba.javaboost.R
-import com.dzyuba.javaboost.domain.FirebaseRepository
+import com.dzyuba.javaboost.domain.ProfileRepository
 import com.dzyuba.javaboost.domain.Resource
 import com.dzyuba.javaboost.domain.entities.User
 import com.dzyuba.javaboost.util.Event
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SignInViewModel @Inject constructor(
-    private val repository: FirebaseRepository
+    private val repository: ProfileRepository
 ) : ViewModel() {
 
     private val _signIn = MutableLiveData<Event<Resource<User>>>()

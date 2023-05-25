@@ -5,13 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dzyuba.javaboost.R
-import com.dzyuba.javaboost.domain.FirebaseRepository
+import com.dzyuba.javaboost.domain.ProfileRepository
 import com.dzyuba.javaboost.domain.Resource
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NicknameViewModel @Inject constructor(
-    private val repository: FirebaseRepository
+    private val repository: ProfileRepository
 ) : ViewModel() {
 
     private val _changeNickname = MutableLiveData<Resource<Unit>>()

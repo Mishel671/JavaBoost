@@ -1,14 +1,20 @@
 package com.dzyuba.javaboost.presentation.main
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
+import com.dzyuba.javaboost.App
 import com.dzyuba.javaboost.R
 import com.dzyuba.javaboost.databinding.FragmentMainBinding
+import com.dzyuba.javaboost.presentation.ViewModelFactory
 import com.dzyuba.javaboost.presentation.lessons.LessonsListFragment
 import com.dzyuba.javaboost.presentation.profile.ProfileFragment
+import com.dzyuba.javaboost.presentation.signin.SignInViewModel
+import javax.inject.Inject
 
 class MainFragment : Fragment() {
 
@@ -16,8 +22,20 @@ class MainFragment : Fragment() {
     private val binding: FragmentMainBinding
         get() = _binding ?: throw RuntimeException("FragmentMainBinding == null")
 
-    private val lessonsFragment = LessonsListFragment.newInstance()
+    private val lessonsFragment = LessonsListFragment.allLessons()
     private val profileFragment = ProfileFragment.newInstance()
+
+    private val component by lazy {
+        (requireActivity().application as App).componentApp
+    }
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        component.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,6 +47,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
         if (savedInstanceState == null) {
             launchNavigationFragments(lessonsFragment)
         }
@@ -42,7 +61,7 @@ class MainFragment : Fragment() {
     }
 
     private fun launchNavigationFragments(fragment: Fragment) {
-        childFragmentManager.beginTransaction()
+        parentFragmentManager.beginTransaction()
             .replace(R.id.bnvFragmentContainer, fragment)
             .commit()
     }

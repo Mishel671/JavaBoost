@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dzyuba.javaboost.domain.FirebaseRepository
+import com.dzyuba.javaboost.domain.ProfileRepository
 import com.dzyuba.javaboost.domain.Resource
 import com.dzyuba.javaboost.domain.entities.User
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class EmailVerifiedViewModel @Inject constructor(
-    private val repository: FirebaseRepository
+    private val repository: ProfileRepository
 ) : ViewModel() {
 
     private val _verificationEmail = MutableLiveData<Resource<Unit>>()

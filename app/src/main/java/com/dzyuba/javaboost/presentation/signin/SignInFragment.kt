@@ -22,9 +22,7 @@ import com.dzyuba.javaboost.presentation.nickname.NicknameFragment
 import com.dzyuba.javaboost.presentation.signup.SignUpFragment
 import com.dzyuba.javaboost.presentation.signup.SignUpFragment.Companion.SIGN_UP_KEY
 import com.dzyuba.javaboost.presentation.signup.SignUpFragment.Companion.SIGN_UP_EMAIL_KEY
-import com.dzyuba.javaboost.presentation.splash.SplashFragment
 import com.dzyuba.javaboost.util.initProgressBar
-import com.dzyuba.javaboost.util.showAlert
 import com.dzyuba.javaboost.util.showErrorAlert
 import javax.inject.Inject
 
@@ -33,6 +31,8 @@ class SignInFragment : Fragment() {
     private var _binding: FragmentSignInBinding? = null
     private val binding: FragmentSignInBinding
         get() = _binding ?: throw RuntimeException("FragmentSignInBinding == null")
+
+    private val dialog by lazy { initProgressBar(layoutInflater, requireContext()) }
 
     private val component by lazy {
         (requireActivity().application as App).componentApp
@@ -44,8 +44,6 @@ class SignInFragment : Fragment() {
     private val viewModel by lazy {
         ViewModelProvider(this, viewModelFactory)[SignInViewModel::class.java]
     }
-
-    private val dialog by lazy { initProgressBar(layoutInflater, requireContext()) }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -122,7 +120,7 @@ class SignInFragment : Fragment() {
                             if (user.name != null)
                                 MainFragment.newInstance()
                             else
-                                NicknameFragment.newInstance()
+                                NicknameFragment.launchRegistrationMode()
                         } else {
                             fragmentTransaction.addToBackStack(null)
                             EmailVerifiedFragment.newInstance()

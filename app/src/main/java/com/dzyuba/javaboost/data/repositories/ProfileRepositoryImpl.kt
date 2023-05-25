@@ -1,35 +1,35 @@
-package com.dzyuba.javaboost.data
+package com.dzyuba.javaboost.data.repositories
 
 import android.graphics.Bitmap
-import com.dzyuba.javaboost.domain.FirebaseRepository
+import com.dzyuba.javaboost.data.firebase.*
+import com.dzyuba.javaboost.data.converters.toLessonShort
+import com.dzyuba.javaboost.data.converters.toThrowable
+import com.dzyuba.javaboost.data.converters.toUser
+import com.dzyuba.javaboost.data.firebase.entities.LessonShortFire
+import com.dzyuba.javaboost.data.firebase.entities.UserFire
+import com.dzyuba.javaboost.domain.ProfileRepository
 import com.dzyuba.javaboost.domain.Resource
+import com.dzyuba.javaboost.domain.entities.LessonShort
 import com.dzyuba.javaboost.domain.entities.User
-import com.google.firebase.auth.EmailAuthCredential
 import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth.AuthStateListener
-import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.StorageReference
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 
-class FirebaseRepositoryImpl @Inject constructor(
-) : FirebaseRepository {
-
-    private val firebaseAuth by lazy {
-        Firebase.auth
-    }
-
-    private val firebaseStorage by lazy {
-        Firebase.storage
-    }
+class ProfileRepositoryImpl @Inject constructor(
+    private val firebaseAuth: FirebaseAuth,
+    private val firebaseDatabase: DatabaseReference,
+    private val firebaseStorage: StorageReference,
+) : ProfileRepository {
 
 
     override fun isAuthenticated() = firebaseAuth.currentUser != null
@@ -108,12 +108,19 @@ class FirebaseRepositoryImpl @Inject constructor(
                 val profileUpdates = userProfileChangeRequest {
                     displayName = name
                 }
-                firebaseAuth.currentUser!!.updateProfile(profileUpdates).addOnCompleteListener { task ->
-                    if (task.isSuccessful)
-                        cont.resume(Resource.success(Unit))
-                    else
-                        cont.resume(Resource.error(task.exception.toThrowable()))
-                }
+                firebaseAuth.currentUser!!.updateProfile(profileUpdates)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful)
+                            firebaseDatabase.child(USERS).child(firebaseAuth.currentUser!!.uid)
+                                .child(NICKNAME).setValue(name).addOnCompleteListener { realTask ->
+                                    cont.resume(
+                                        if (realTask.isSuccessful) Resource.success(Unit)
+                                        else Resource.error(realTask.exception.toThrowable())
+                                    )
+                                }
+                        else
+                            cont.resume(Resource.error(task.exception.toThrowable()))
+                    }
             } else {
                 cont.resume(Resource.error(Throwable("User not registered")))
             }
@@ -121,7 +128,7 @@ class FirebaseRepositoryImpl @Inject constructor(
 
     override suspend fun updateProfileImage(image: Bitmap): Resource<Unit> =
         suspendCoroutine { cont ->
-            val imagesRef = firebaseStorage.reference.child(
+            val imagesRef = firebaseStorage.child(
                 "images/" + firebaseAuth.currentUser?.uid + ".jpg"
             )
             val baos = ByteArrayOutputStream()
@@ -131,19 +138,29 @@ class FirebaseRepositoryImpl @Inject constructor(
                 if (loadTask.isSuccessful)
                     imagesRef.downloadUrl.addOnCompleteListener { uriTask ->
                         if (uriTask.isSuccessful) {
-                            firebaseAuth.currentUser?.let {
+                            if (firebaseAuth.currentUser != null) {
                                 val profileUpdates = userProfileChangeRequest {
                                     photoUri = uriTask.result
                                 }
-                                it.updateProfile(profileUpdates)
+                                firebaseAuth.currentUser!!.updateProfile(profileUpdates)
                                     .addOnCompleteListener { updateTask ->
                                         if (updateTask.isSuccessful)
-                                            cont.resume(Resource.success(Unit))
+                                            firebaseDatabase.child(USERS)
+                                                .child(firebaseAuth.currentUser!!.uid)
+                                                .child(AVATAR)
+                                                .setValue(firebaseAuth.currentUser!!.photoUrl?.toString())
+                                                .addOnCompleteListener { task ->
+                                                    cont.resume(
+                                                        if (task.isSuccessful)
+                                                            Resource.success(Unit)
+                                                        else Resource.error(task.exception.toThrowable())
+                                                    )
+                                                }
                                         else
                                             cont.resume(Resource.error(uriTask.exception.toThrowable()))
                                     }
-                            }
-                            cont.resume(Resource.error(Throwable("User not registered")))
+                            } else
+                                cont.resume(Resource.error(Throwable("User not registered")))
                         } else
                             cont.resume(Resource.error(uriTask.exception.toThrowable()))
                     }
@@ -151,6 +168,7 @@ class FirebaseRepositoryImpl @Inject constructor(
                     cont.resume(Resource.error(loadTask.exception.toThrowable()))
             }
         }
+
 
     override suspend fun changePassword(oldPassword: String, newPassword: String): Resource<Unit> =
         suspendCoroutine { cont ->
@@ -170,4 +188,36 @@ class FirebaseRepositoryImpl @Inject constructor(
             }
             cont.resume(Resource.error(Throwable("User not registered")))
         }
+
+    override suspend fun updateConnection() {
+        val usersRef = firebaseDatabase.child(USERS)
+        val userRef = usersRef.child(firebaseAuth.currentUser!!.uid)
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    userRef.child(IS_ONLINE).apply {
+                        setValue(true)
+                        onDisconnect().setValue(false)
+                    }
+                } else {
+                    val userFire = UserFire(
+                        id = firebaseAuth.currentUser!!.uid,
+                        avatar = firebaseAuth.currentUser?.photoUrl?.toString(),
+                        nickname = firebaseAuth.currentUser!!.displayName!!,
+                        isOnline = true,
+                        lastLesson = null,
+                        learnedLessons = null
+                    )
+                    usersRef.setValue(userFire).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            usersRef.child(userFire.id).child(IS_ONLINE).onDisconnect()
+                                .setValue(false)
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
 }
