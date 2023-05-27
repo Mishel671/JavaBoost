@@ -1,6 +1,7 @@
 package com.dzyuba.javaboost.di
 
 import androidx.lifecycle.ViewModel
+import com.dzyuba.javaboost.presentation.comments.CommentsViewModel
 import com.dzyuba.javaboost.presentation.email_verified.EmailVerifiedViewModel
 import com.dzyuba.javaboost.presentation.forgot_password.ForgotPasswordViewModel
 import com.dzyuba.javaboost.presentation.lesson_detail.LessonDetailViewModel
@@ -67,4 +68,9 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(LessonDetailViewModel::class)
     fun bindLessonDetailViewModel(viewModel: LessonDetailViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CommentsViewModel::class)
+    fun bindCommentsViewModel(viewModel: CommentsViewModel): ViewModel
 }

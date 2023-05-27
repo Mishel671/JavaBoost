@@ -1,7 +1,7 @@
 package com.dzyuba.javaboost.domain.entities.lesson
 
 data class Comment(
-    val id: Int,
+    val id: Long,
     val userId: String,
     val userName: String,
     val userLogo: String? = null,

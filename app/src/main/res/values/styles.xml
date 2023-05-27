@@ -6,8 +6,8 @@
         <item name="colorPrimaryVariant">@color/white</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
+        <item name="colorSecondary">@color/blue</item>
+        <item name="colorSecondaryVariant">@color/blue</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/black</item>
@@ -87,6 +87,7 @@
         <item name="android:lines">1</item>
         <item name="android:ellipsize">end</item>
     </style>
+
     <style name="tv16BoldMultiLine">
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">16sp</item>
@@ -121,5 +122,17 @@
         <item name="colorPrimaryDark">@color/blue</item>
         <item name="colorPrimary">@color/blue</item>
         <item name="colorControlActivated">@color/blue</item>
+    </style>
+
+    <style name="MessagerEditText" >
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:inputType">textMultiLine</item>
+        <item name="android:maxLines">6</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:minHeight">50dp</item>
+        <item name="android:textColorHighlight">@color/blue_alpha</item>
+        <item name="android:textCursorDrawable">@drawable/et_cursor</item>
+
     </style>
 </resources>

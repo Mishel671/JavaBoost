@@ -65,6 +65,9 @@
     <string name="lesson_detail_thanks_for_rate">Спасибо за вашу оценку!</string>
     <string name="lesson_detail_comments">Комментарии</string>
 
+    <!--    Comments-->
+    <string name="comments_message">Сообщение</string>
+    <string name="comments_empty">Еще никто не оставлял комментариев.\nБудьте первым!</string>
 
     <!--    Downloading-->
     <string name="succes">Успешно</string>

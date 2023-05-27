@@ -14,6 +14,7 @@ import com.dzyuba.javaboost.R
 import com.dzyuba.javaboost.databinding.FragmentLessonDetailBinding
 import com.dzyuba.javaboost.domain.entities.lesson.Lesson
 import com.dzyuba.javaboost.presentation.ViewModelFactory
+import com.dzyuba.javaboost.presentation.comments.CommentsFragment
 import com.dzyuba.javaboost.presentation.lesson_detail.adapter.LessonAdapter
 import com.dzyuba.javaboost.util.initProgressBar
 import com.dzyuba.javaboost.util.showAlert
@@ -136,7 +137,15 @@ class LessonDetailFragment : Fragment() {
         }
         binding.includeComments.leftText.text = getString(R.string.lesson_detail_comments)
         binding.includeComments.root.setOnClickListener {
-
+            parentFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.slide_enter_left,
+                    R.anim.slide_exit_left,
+                    R.anim.slide_enter_right,
+                    R.anim.slide_exit_right
+                ).addToBackStack(null)
+                .replace(R.id.bnvFragmentContainer, CommentsFragment.newInstance(lesson.id))
+                .commit()
         }
         lessonAdapter.submitList(lesson.lessonItems)
     }

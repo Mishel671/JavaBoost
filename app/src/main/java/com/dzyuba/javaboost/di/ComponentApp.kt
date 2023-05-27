@@ -1,6 +1,7 @@
 package com.dzyuba.javaboost.di
 
 import android.app.Application
+import com.dzyuba.javaboost.presentation.comments.CommentsFragment
 import com.dzyuba.javaboost.presentation.email_verified.EmailVerifiedFragment
 import com.dzyuba.javaboost.presentation.forgot_password.ForgotPasswordFragment
 import com.dzyuba.javaboost.presentation.lesson_detail.LessonDetailFragment
@@ -28,6 +29,7 @@ interface ComponentApp {
     fun inject(fragment: MainFragment)
     fun inject(fragment: LessonsListFragment)
     fun inject(fragment: LessonDetailFragment)
+    fun inject(fragment: CommentsFragment)
 
     @Component.Factory
     interface Factory {

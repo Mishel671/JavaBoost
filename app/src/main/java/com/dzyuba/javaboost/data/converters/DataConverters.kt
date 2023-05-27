@@ -30,11 +30,11 @@ fun LessonFire.toLesson() = Lesson(
     id = id,
     lessonName = lessonName!!,
     rating = rating,
-    comments = comments?.map { it.toComment() },
+//    comments = comments?.map { it.toComment() },
     lessonItems = lessonItems!!.toLessonItemList()
 )
 
-private fun CommentFire.toComment() = Comment(
+fun CommentFire.toComment() = Comment(
     id = id,
     userId = userId!!,
     userName = userName!!,
