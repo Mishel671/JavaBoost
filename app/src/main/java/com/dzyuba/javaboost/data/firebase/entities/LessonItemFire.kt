@@ -17,9 +17,8 @@ data class LessonItemFire(
 
     //Test
     val question: String? = null,
-    val answers: HashSet<AnswerFire>? = null,
+    val answers: List<AnswerFire>? = null,
     val trueAnswerId: Int? = null,
-    var answerResult: Boolean? = null,
 
     //Practice
     val task: String? = null,

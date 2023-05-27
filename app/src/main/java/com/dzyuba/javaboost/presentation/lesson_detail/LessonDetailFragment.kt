@@ -76,6 +76,9 @@ class LessonDetailFragment : Fragment() {
             setMaxRecycledViews(LessonAdapter.PRACTICE_VIEW, LessonAdapter.PRACTICE_VIEW_COUNT)
         }
         binding.rvLesson.adapter = lessonAdapter
+        lessonAdapter.onAnswerClick = { answerId, itemId ->
+            viewModel.setAnswer(answerId, itemId)
+        }
     }
 
     private fun setObservers() {
@@ -130,6 +133,10 @@ class LessonDetailFragment : Fragment() {
         binding.rbRating.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
             if (fromUser)
                 viewModel.setRate(lessonId, rating)
+        }
+        binding.includeComments.leftText.text = getString(R.string.lesson_detail_comments)
+        binding.includeComments.root.setOnClickListener {
+
         }
         lessonAdapter.submitList(lesson.lessonItems)
     }

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="10dp"
+        android:layoutDirection="rtl"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/ivResult"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:visibility="invisible"
+            tools:src="@drawable/ic_succes"
+            tools:tint="@color/green"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvQuestion"
+            style="@style/tv14NormalMultiLine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            tools:text="Вопрос" />
+    </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/rgTest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:background="@drawable/code_frame"
+        android:orientation="vertical"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="10dp">
+
+        <RadioButton
+            android:id="@+id/rbQuestion1"
+            style="@style/tv14NormalMultiLine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:buttonTint="@drawable/selector_test"
+            android:textSize="16sp"
+            tools:text="Text1" />
+
+        <RadioButton
+            android:id="@+id/rbQuestion2"
+            style="@style/tv14NormalMultiLine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+
+            android:buttonTint="@drawable/selector_test"
+            android:textSize="16sp"
+            tools:text="Text2" />
+
+        <RadioButton
+            android:id="@+id/rbQuestion3"
+            style="@style/tv14NormalMultiLine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:buttonTint="@drawable/selector_test"
+            android:textSize="16sp"
+            tools:text="Text3" />
+
+        <RadioButton
+            android:id="@+id/rbQuestion4"
+            style="@style/tv14NormalMultiLine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:buttonTint="@drawable/selector_test"
+            android:textSize="16sp"
+            tools:text="Text4" />
+    </RadioGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnConfirm"
+        style="@style/BlueCornersButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="10dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
+        android:text="@string/accept" />
+</LinearLayout>

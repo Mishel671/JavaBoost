@@ -4,9 +4,9 @@ data class Test(
     override val id: Int,
     override val type: Type = Type.TEST,
     val question: String,
-    val answers: HashSet<Answer>,
+    val answers: List<Answer>,
     val trueAnswerId: Int,
-    var answerResult: Boolean? = null
+    var answerResult: Int? = null
 ) : LessonItem(id, type) {
     data class Answer(
         val id: Int,

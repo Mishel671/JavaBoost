@@ -6,10 +6,13 @@ import androidx.recyclerview.widget.ListAdapter
 import com.dzyuba.javaboost.databinding.RvCodeItemBinding
 import com.dzyuba.javaboost.databinding.RvDividerItemBinding
 import com.dzyuba.javaboost.databinding.RvHeaderItemBinding
+import com.dzyuba.javaboost.databinding.RvTestItemBinding
 import com.dzyuba.javaboost.databinding.RvTextItemBinding
 import com.dzyuba.javaboost.domain.entities.lesson.*
 
 class LessonAdapter : ListAdapter<LessonItem, LessonViewHolder>(LessonItemCallback) {
+
+    var onAnswerClick: ((Int, Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LessonViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -17,24 +20,31 @@ class LessonAdapter : ListAdapter<LessonItem, LessonViewHolder>(LessonItemCallba
             HEADER_VIEW -> LessonViewHolder.HeaderViewHolder(
                 RvHeaderItemBinding.inflate(layoutInflater, parent, false)
             )
+
             TEXT_VIEW -> LessonViewHolder.TextViewHolder(
                 RvTextItemBinding.inflate(layoutInflater, parent, false)
             )
+
             IMAGE_VIEW -> LessonViewHolder.DividerViewHolder(
                 RvDividerItemBinding.inflate(layoutInflater, parent, false)
             )
+
             CODE_VIEW -> LessonViewHolder.CodeViewHolder(
                 RvCodeItemBinding.inflate(layoutInflater, parent, false)
             )
+
             DIVIDER_VIEW -> LessonViewHolder.DividerViewHolder(
                 RvDividerItemBinding.inflate(layoutInflater, parent, false)
             )
-            TEST_VIEW -> LessonViewHolder.DividerViewHolder(
-                RvDividerItemBinding.inflate(layoutInflater, parent, false)
+
+            TEST_VIEW -> LessonViewHolder.TestViewHolder(
+                RvTestItemBinding.inflate(layoutInflater, parent, false)
             )
+
             PRACTICE_VIEW -> LessonViewHolder.DividerViewHolder(
                 RvDividerItemBinding.inflate(layoutInflater, parent, false)
             )
+
             else -> throw RuntimeException("Unknown view type")
         }
 
@@ -47,6 +57,12 @@ class LessonAdapter : ListAdapter<LessonItem, LessonViewHolder>(LessonItemCallba
             is LessonViewHolder.TextViewHolder -> holder.bind(getItem(position) as Text)
             is LessonViewHolder.DividerViewHolder -> holder.bind(getItem(position) as Divider)
             is LessonViewHolder.CodeViewHolder -> holder.bind(getItem(position) as Code)
+            is LessonViewHolder.TestViewHolder -> holder.bind(
+                getItem(position) as Test,
+                onClickAnswer = { answerId, itemId ->
+                    onAnswerClick?.invoke(answerId, itemId)
+                }
+            )
         }
     }
 

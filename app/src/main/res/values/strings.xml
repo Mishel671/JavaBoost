@@ -63,6 +63,7 @@
     <string name="lesson_detail_your_rating">Ваша оценка: %.1f</string>
     <string name="lesson_detail_middle_rating">Средняя оценка: %.1f</string>
     <string name="lesson_detail_thanks_for_rate">Спасибо за вашу оценку!</string>
+    <string name="lesson_detail_comments">Комментарии</string>
 
 
     <!--    Downloading-->

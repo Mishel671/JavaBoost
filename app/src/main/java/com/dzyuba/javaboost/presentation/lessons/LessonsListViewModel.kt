@@ -21,10 +21,6 @@ class LessonsListViewModel @Inject constructor(
     val lessons: LiveData<Resource<List<LessonShort>>>
         get() = _lessons
 
-    init {
-        loadDetailLesson()
-    }
-
     fun loadLessons(ids: List<Int>? = null) {
         if (_lessons.value?.status != Resource.Status.SUCCESS) {
             _lessons.value = Resource.loading()
@@ -34,16 +30,6 @@ class LessonsListViewModel @Inject constructor(
                 _lessons.postValue(repository.getLessonsShort())
             } else {
                 _lessons.postValue(repository.getLessonsShortById(ids))
-            }
-        }
-    }
-
-    fun loadDetailLesson(){
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getLessonsDetail(0).ifError {
-                Log.d("MainLog", "Error: ${it.message}")
-            }.ifSuccess {
-                Log.d("MainLog", "Succes: ${it}")
             }
         }
     }

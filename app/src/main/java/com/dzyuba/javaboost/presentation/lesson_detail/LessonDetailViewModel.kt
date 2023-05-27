@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.dzyuba.javaboost.domain.LessonRepository
 import com.dzyuba.javaboost.domain.Resource
 import com.dzyuba.javaboost.domain.entities.lesson.Lesson
+import com.dzyuba.javaboost.domain.entities.lesson.Test
 import com.dzyuba.javaboost.presentation.ViewModelFactory
+import com.dzyuba.javaboost.util.Event
 import dagger.Provides
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -42,7 +44,23 @@ class LessonDetailViewModel @Inject constructor(
     fun setRate(lessonId: Int, rate: Float) {
         _rate.value = Resource.loading()
         viewModelScope.launch(Dispatchers.IO) {
-           _rate.postValue(repository.setLessonRate(lessonId, rate))
+            _rate.postValue(repository.setLessonRate(lessonId, rate))
+        }
+    }
+
+    fun setAnswer(answerId: Int, itemId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _lesson.value?.data?.let { lesson ->
+                val lessonsList = lesson.lessonItems
+                if (lessonsList.size - 1 >= itemId) {
+                    val item = lessonsList[itemId]
+                    if (item is Test) {
+                        val changeTest = item.copy(answerResult = answerId )
+                        val newList = lessonsList.toMutableList().apply { set(itemId, changeTest) }
+                        _lesson.postValue(Resource.success(lesson.copy(lessonItems = newList)))
+                    }
+                }
+            }
         }
     }
 }

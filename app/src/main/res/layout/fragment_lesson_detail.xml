@@ -73,6 +73,17 @@
                     app:layout_constraintTop_toBottomOf="@id/tvYourRate"
                     tools:text="Средняя оценка: 4.5" />
 
+                <include
+                    android:id="@+id/includeComments"
+                    layout="@layout/item_two_text_with_arrow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="15dp"
+                    android:layout_marginTop="15dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvMiddleRate" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 

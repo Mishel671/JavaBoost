@@ -54,9 +54,8 @@ private fun LessonItemFire.toLessonItem() = when (type?.toType()) {
         Test(
             id = id,
             question = question!!,
-            answers = answers!!.map { it.toAnswer() }.toHashSet(),
-            trueAnswerId = trueAnswerId!!,
-            answerResult = answerResult
+            answers = answers!!.map { it.toAnswer() },
+            trueAnswerId = trueAnswerId!!
         )
     }
     Type.PRACTICE -> {
