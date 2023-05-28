@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import com.dzyuba.javaboost.App
@@ -43,28 +45,8 @@ class ProfileFragment : Fragment() {
     private val dialog by lazy { initProgressBar(layoutInflater, requireContext()) }
     private val baseAdapter = BaseAdapter()
 
-    private val galleryResult =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK && it.data != null) {
-                val uri = it.data?.data
-                uri?.let {
-                    val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        val source = ImageDecoder.createSource(
-                            requireActivity().contentResolver,
-                            uri
-                        )
-                        ImageDecoder.decodeBitmap(source)
-                    } else {
-                        getBitmap(
-                            requireActivity().contentResolver,
-                            uri
-                        )
-                    }
-                    viewModel.updateImage(bitmap)
-                }
+    private var galleryResult: ActivityResultLauncher<Intent>? = null
 
-            }
-        }
 
     private val component by lazy {
         (requireActivity().application as App).componentApp
@@ -102,12 +84,27 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setFragmentsResult() {
-//        parentFragmentManager.setFragmentResultListener(
-//            EDIT_RESULT_KEY,
-//            viewLifecycleOwner
-//        ) { key, bundle ->
-//            showNavBar()
-//        }
+        galleryResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK && it.data != null) {
+                val uri = it.data?.data
+                uri?.let {
+                    val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        val source = ImageDecoder.createSource(
+                            requireActivity().contentResolver,
+                            uri
+                        )
+                        ImageDecoder.decodeBitmap(source)
+                    } else {
+                        getBitmap(
+                            requireActivity().contentResolver,
+                            uri
+                        )
+                    }
+                    viewModel.updateImage(bitmap)
+                }
+
+            }
+        }
     }
 
     private fun setObservers() {
@@ -176,7 +173,7 @@ class ProfileFragment : Fragment() {
             onItemClick = {
                 val intent =
                     Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                galleryResult.launch(intent)
+                galleryResult?.launch(intent)
             }
         })
         add(ItemGrayLine())
@@ -221,6 +218,7 @@ class ProfileFragment : Fragment() {
 
     override fun onDestroyView() {
         _binding = null
+        galleryResult = null
         super.onDestroyView()
     }
 
