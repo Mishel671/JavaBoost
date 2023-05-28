@@ -61,6 +61,7 @@ class LessonDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.appBar.setExpanded(true)
         viewModel.loadLesson(lessonId)
         setObservers()
         setupAdapter()
@@ -128,7 +129,7 @@ class LessonDetailFragment : Fragment() {
             binding.rbRating.rating = userRate
             String.format(getString(R.string.lesson_detail_your_rating), userRate)
         }
-        val middleRate = lesson.rating?.values?.average() ?: 0
+        val middleRate = lesson.rating?.values?.average() ?: 0.0
         binding.tvMiddleRate.text =
             String.format(getString(R.string.lesson_detail_middle_rating), middleRate)
         binding.rbRating.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
