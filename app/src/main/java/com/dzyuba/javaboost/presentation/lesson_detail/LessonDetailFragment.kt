@@ -13,8 +13,10 @@ import com.dzyuba.javaboost.App
 import com.dzyuba.javaboost.R
 import com.dzyuba.javaboost.databinding.FragmentLessonDetailBinding
 import com.dzyuba.javaboost.domain.entities.lesson.Lesson
+import com.dzyuba.javaboost.domain.entities.lesson.Practice
 import com.dzyuba.javaboost.presentation.ViewModelFactory
 import com.dzyuba.javaboost.presentation.comments.CommentsFragment
+import com.dzyuba.javaboost.presentation.ide.editor.EditorFragment
 import com.dzyuba.javaboost.presentation.lesson_detail.adapter.LessonAdapter
 import com.dzyuba.javaboost.util.initProgressBar
 import com.dzyuba.javaboost.util.showAlert
@@ -80,6 +82,20 @@ class LessonDetailFragment : Fragment() {
         binding.rvLesson.adapter = lessonAdapter
         lessonAdapter.onAnswerClick = { answerId, itemId ->
             viewModel.setAnswer(answerId, itemId)
+        }
+        lessonAdapter.onPracticeClick = { practiceId ->
+            val practice = viewModel.lesson.value?.data?.lessonItems?.get(practiceId) as? Practice
+            practice?.let {
+                parentFragmentManager.beginTransaction()
+                    .setCustomAnimations(
+                        R.anim.slide_enter_left,
+                        R.anim.slide_exit_left,
+                        R.anim.slide_enter_right,
+                        R.anim.slide_exit_right
+                    ).addToBackStack(null)
+                    .replace(R.id.bnvFragmentContainer, EditorFragment.newInstance(it.outputKeyWords))
+                    .commit()
+            }
         }
     }
 

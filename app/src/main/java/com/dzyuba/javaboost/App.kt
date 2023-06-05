@@ -1,9 +1,9 @@
 package com.dzyuba.javaboost
 
-import android.app.Application
 import com.dzyuba.javaboost.di.DaggerComponentApp
+import com.xiaoyv.javaengine.JavaEngineApplication
 
-class App : Application() {
+class App : JavaEngineApplication() {
 
     val componentApp by lazy {
         DaggerComponentApp.factory().create(this)

@@ -15,4 +15,6 @@
     <color name="red_light">#CE5870</color>
     <color name="red">#EA1843</color>
     <color name="green">#2FCA37</color>
+    <color name="green_dark">#499c54</color>
+    <color name="orange">#cb7330</color>
 </resources>

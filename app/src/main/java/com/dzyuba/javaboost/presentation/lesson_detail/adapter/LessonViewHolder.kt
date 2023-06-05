@@ -12,11 +12,13 @@ import com.dzyuba.javaboost.R
 import com.dzyuba.javaboost.databinding.RvCodeItemBinding
 import com.dzyuba.javaboost.databinding.RvDividerItemBinding
 import com.dzyuba.javaboost.databinding.RvHeaderItemBinding
+import com.dzyuba.javaboost.databinding.RvPracticeItemBinding
 import com.dzyuba.javaboost.databinding.RvTestItemBinding
 import com.dzyuba.javaboost.databinding.RvTextItemBinding
 import com.dzyuba.javaboost.domain.entities.lesson.Code
 import com.dzyuba.javaboost.domain.entities.lesson.Divider
 import com.dzyuba.javaboost.domain.entities.lesson.Header
+import com.dzyuba.javaboost.domain.entities.lesson.Practice
 import com.dzyuba.javaboost.domain.entities.lesson.Test
 import com.dzyuba.javaboost.domain.entities.lesson.Text
 import com.dzyuba.javaboost.util.DarkBackgroundCustomScheme
@@ -127,6 +129,31 @@ sealed class LessonViewHolder(binding: ViewBinding) : ViewHolder(binding.root) {
             binding.rbQuestion2.isClickable = isClickable
             binding.rbQuestion3.isClickable = isClickable
             binding.rbQuestion4.isClickable = isClickable
+        }
+    }
+
+    class PracticeViewHolder(private val binding: RvPracticeItemBinding) : LessonViewHolder(binding) {
+        fun bind(practice: Practice, onClick: ((Int) -> Unit)? = null) {
+            binding.tvQuestion.text = practice.task
+            if(practice.inputFormat != null){
+                binding.tvInputValuesTitle.visible()
+                binding.tvInputValues.visible()
+                binding.tvInputValues.text = practice.inputFormat
+            }else{
+                binding.tvInputValuesTitle.gone()
+                binding.tvInputValues.gone()
+            }
+            if(practice.outputFormat != null){
+                binding.tvOutputValuesTitle.visible()
+                binding.tvOutputValues.visible()
+                binding.tvOutputValues.text = practice.outputFormat
+            }else{
+                binding.tvOutputValuesTitle.gone()
+                binding.tvOutputValues.gone()
+            }
+            binding.btnPractice.setOnClickListener {
+                onClick?.invoke(practice.id)
+            }
         }
     }
 }

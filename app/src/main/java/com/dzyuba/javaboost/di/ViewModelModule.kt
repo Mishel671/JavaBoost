@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import com.dzyuba.javaboost.presentation.comments.CommentsViewModel
 import com.dzyuba.javaboost.presentation.email_verified.EmailVerifiedViewModel
 import com.dzyuba.javaboost.presentation.forgot_password.ForgotPasswordViewModel
+import com.dzyuba.javaboost.presentation.ide.console.ConsoleViewModel
+import com.dzyuba.javaboost.presentation.ide.editor.EditorViewModel
 import com.dzyuba.javaboost.presentation.lesson_detail.LessonDetailViewModel
 import com.dzyuba.javaboost.presentation.lessons.LessonsListViewModel
 import com.dzyuba.javaboost.presentation.main.MainViewModel
@@ -73,4 +75,14 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(CommentsViewModel::class)
     fun bindCommentsViewModel(viewModel: CommentsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EditorViewModel::class)
+    fun bindEditorViewModel(viewModel: EditorViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ConsoleViewModel::class)
+    fun bindConsoleViewModel(viewModel: ConsoleViewModel): ViewModel
 }

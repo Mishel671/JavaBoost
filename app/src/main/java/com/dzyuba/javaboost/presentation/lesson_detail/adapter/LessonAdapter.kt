@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.dzyuba.javaboost.databinding.RvCodeItemBinding
 import com.dzyuba.javaboost.databinding.RvDividerItemBinding
 import com.dzyuba.javaboost.databinding.RvHeaderItemBinding
+import com.dzyuba.javaboost.databinding.RvPracticeItemBinding
 import com.dzyuba.javaboost.databinding.RvTestItemBinding
 import com.dzyuba.javaboost.databinding.RvTextItemBinding
 import com.dzyuba.javaboost.domain.entities.lesson.*
@@ -13,6 +14,8 @@ import com.dzyuba.javaboost.domain.entities.lesson.*
 class LessonAdapter : ListAdapter<LessonItem, LessonViewHolder>(LessonItemCallback) {
 
     var onAnswerClick: ((Int, Int) -> Unit)? = null
+
+    var onPracticeClick: ((Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LessonViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -41,8 +44,8 @@ class LessonAdapter : ListAdapter<LessonItem, LessonViewHolder>(LessonItemCallba
                 RvTestItemBinding.inflate(layoutInflater, parent, false)
             )
 
-            PRACTICE_VIEW -> LessonViewHolder.DividerViewHolder(
-                RvDividerItemBinding.inflate(layoutInflater, parent, false)
+            PRACTICE_VIEW -> LessonViewHolder.PracticeViewHolder(
+                RvPracticeItemBinding.inflate(layoutInflater, parent, false)
             )
 
             else -> throw RuntimeException("Unknown view type")
@@ -61,6 +64,13 @@ class LessonAdapter : ListAdapter<LessonItem, LessonViewHolder>(LessonItemCallba
                 getItem(position) as Test,
                 onClickAnswer = { answerId, itemId ->
                     onAnswerClick?.invoke(answerId, itemId)
+                }
+            )
+
+            is LessonViewHolder.PracticeViewHolder -> holder.bind(
+                getItem(position) as Practice,
+                onClick = { practiceId ->
+                    onPracticeClick?.invoke(practiceId)
                 }
             )
         }

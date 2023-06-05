@@ -75,6 +75,14 @@
     <string name="save_profile_error">Ошибка сохранения профиля</string>
     <string name="unknown_value">Unknown value</string>
 
+    <!--    Compiler-->
+    <string name="editor_log">compile output log</string>
+    <string name="editor_import">Guide package</string>
+    <string name="editor_comment">Note</string>
+    <string name="input_values">Входные данные</string>
+    <string name="output_values">Выходные данные</string>
+    <string name="go_to_practice">Перейти к практике</string>
+
     <!--    Надписи действия/согласия/не согласия-->
     <string name="ok">OK</string>
     <string name="save">Сохранить</string>

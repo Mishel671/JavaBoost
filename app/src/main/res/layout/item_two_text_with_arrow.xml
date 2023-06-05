@@ -24,8 +24,8 @@
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="14sp"
-        android:layout_height="14sp"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
         android:layout_marginEnd="16dp"
         android:adjustViewBounds="true"
         android:scaleType="fitStart"

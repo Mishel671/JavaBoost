@@ -24,6 +24,7 @@ data class LessonItemFire(
     val task: String? = null,
     val inputFormat: String? = null,
     val resultFormat: String? = null,
-    val keyWords: List<String>? = null,
+    val codeKeyWords: List<String>? = null,
+    val outputKeyWords: List<String>? = null,
     val wasDecided: Boolean? = null
 )

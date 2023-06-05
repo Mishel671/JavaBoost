@@ -62,9 +62,10 @@ private fun LessonItemFire.toLessonItem() = when (type?.toType()) {
         Practice(
             id = id,
             task = task!!,
-            inputFormat = inputFormat!!,
-            resultFormat = resultFormat!!,
-            keyWords = keyWords,
+            inputFormat = inputFormat,
+            outputFormat = resultFormat,
+            codeKeyWords = codeKeyWords,
+            outputKeyWords = outputKeyWords!!,
             wasDecided = wasDecided
         )
     }

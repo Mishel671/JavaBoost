@@ -4,6 +4,8 @@ import android.app.Application
 import com.dzyuba.javaboost.presentation.comments.CommentsFragment
 import com.dzyuba.javaboost.presentation.email_verified.EmailVerifiedFragment
 import com.dzyuba.javaboost.presentation.forgot_password.ForgotPasswordFragment
+import com.dzyuba.javaboost.presentation.ide.console.ConsoleFragment
+import com.dzyuba.javaboost.presentation.ide.editor.EditorFragment
 import com.dzyuba.javaboost.presentation.lesson_detail.LessonDetailFragment
 import com.dzyuba.javaboost.presentation.lessons.LessonsListFragment
 import com.dzyuba.javaboost.presentation.main.MainFragment
@@ -30,6 +32,8 @@ interface ComponentApp {
     fun inject(fragment: LessonsListFragment)
     fun inject(fragment: LessonDetailFragment)
     fun inject(fragment: CommentsFragment)
+    fun inject(fragment: EditorFragment)
+    fun inject(fragment: ConsoleFragment)
 
     @Component.Factory
     interface Factory {
