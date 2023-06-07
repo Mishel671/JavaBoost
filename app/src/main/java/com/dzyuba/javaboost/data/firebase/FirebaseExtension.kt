@@ -1,14 +1,7 @@
 package com.dzyuba.javaboost.data.firebase
 
-import com.dzyuba.javaboost.domain.Resource
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 
 const val USERS = "users"
 const val IS_ONLINE = "isOnline"
@@ -19,6 +12,10 @@ const val LESSONS_DETAIL = "lessons_detail"
 const val RATING = "rating"
 const val ALL = "all"
 const val COMMENTS = "comments"
+const val DECIDE_LESSONS = "decide_lessons"
+const val DECIDES = "decides"
+const val TASK_COUNT = "taskCount"
+const val WAS_READ = "wasRead"
 
 fun DatabaseReference.getUsersRow() = this.child(USERS)
 
@@ -29,33 +26,35 @@ fun DatabaseReference.getLessons() = this.child(LESSONS_SHORT)
 
 fun DatabaseReference.getLessonsAllRow() = this.child(LESSONS_SHORT).child(ALL)
 
-fun DatabaseReference.getLessonDetailRow(id: Int) = this.child(LESSONS_DETAIL).child(id.toString())
+fun DatabaseReference.getLessonDetailRow(id: Long) = this.child(LESSONS_DETAIL).child(id.toString())
 
-fun DatabaseReference.getUserRateRow(lessonId: Int, userId: String) =
+fun DatabaseReference.getUserRateRow(lessonId: Long, userId: String) =
     this.child(LESSONS_DETAIL).child(lessonId.toString()).child(RATING).child(userId)
 
-fun DatabaseReference.getCommentsRow(lessonId: Int) =
+fun DatabaseReference.getCommentsRow(lessonId: Long) =
     this.child(LESSONS_DETAIL).child(lessonId.toString()).child(COMMENTS)
 
-fun DatabaseReference.getCommentDetailRow(lessonId: Int, commentId:Long) =
-    this.child(LESSONS_DETAIL).child(lessonId.toString()).child(COMMENTS).child(commentId.toString())
+fun DatabaseReference.getCommentDetailRow(lessonId: Long, commentId: Long) =
+    this.child(LESSONS_DETAIL).child(lessonId.toString()).child(COMMENTS)
+        .child(commentId.toString())
 
-inline fun <reified T> DatabaseReference.listen(): Flow<Resource<T?>> =
-    callbackFlow {
-        val valueListener = object : ValueEventListener {
-            override fun onCancelled(databaseError: DatabaseError) {
-                close(databaseError.toException())
-            }
+fun DatabaseReference.getDecideTaskReadRow(userId: String, lessonId: Long) =
+    this.child(USERS).child(userId).child(DECIDE_LESSONS).child(lessonId.toString()).child(WAS_READ)
 
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                try {
-                    val value = dataSnapshot.getValue(T::class.java)
-                    trySend(Resource.success(value))
-                } catch (exp: Exception) {
-                    if (!isClosedForSend) trySend(Resource.error(exp))
-                }
-            }
-        }
-        addValueEventListener(valueListener)
-        awaitClose { removeEventListener(valueListener) }
-    }
+fun DatabaseReference.getDecideTaskCountRow(userId: String, lessonId: Long) =
+    this.child(USERS).child(userId).child(DECIDE_LESSONS).child(lessonId.toString()).child(TASK_COUNT)
+
+fun DatabaseReference.getDecideLessonItemRow(userId: String, lessonId: Long, lessonItemId: Long) =
+    this.child(USERS).child(userId).child(DECIDE_LESSONS).child(lessonId.toString())
+        .child(DECIDES)
+
+fun DatabaseReference.getDecidesLessonItemRow(userId: String, lessonId: Long) =
+    this.child(USERS).child(userId).child(DECIDE_LESSONS).child(lessonId.toString())
+        .child(DECIDES)
+
+fun DatabaseReference.getDecidesLessonRow(userId: String, lessonId: Long) =
+    this.child(USERS).child(userId).child(DECIDE_LESSONS).child(lessonId.toString())
+
+fun DatabaseReference.getDecidesLessonsRow(userId: String) =
+    this.child(USERS).child(userId).child(DECIDE_LESSONS)
+

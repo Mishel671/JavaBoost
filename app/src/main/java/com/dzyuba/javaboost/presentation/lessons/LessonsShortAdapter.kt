@@ -15,7 +15,7 @@ import com.dzyuba.javaboost.util.visible
 class LessonsShortAdapter(private val context: Context) :
     ListAdapter<LessonShort, LessonsShortViewHolder>(LessonsShortDiffUtil) {
 
-    var onItemClick: ((Int) -> Unit)? = null
+    var onItemClick: ((Long) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LessonsShortViewHolder {
         val binding = ItemLessonShortBinding.inflate(
@@ -36,6 +36,7 @@ class LessonsShortAdapter(private val context: Context) :
             item.detailDescription
         )
         setTags(binding, item.tags)
+        binding.pbLessonProgress.progress = item.progress
         binding.root.setOnClickListener {
             onItemClick?.invoke(item.id)
         }

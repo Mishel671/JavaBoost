@@ -1,5 +1,6 @@
 package com.dzyuba.javaboost.util
 
+import android.animation.Animator
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -11,17 +12,18 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
 import com.dzyuba.javaboost.R
 import com.dzyuba.javaboost.databinding.ProgressBarFullScreenBinding
+import com.dzyuba.javaboost.databinding.TaskSuccesFullScreenBinding
 import com.dzyuba.javaboost.presentation.MainActivity
-import com.dzyuba.javaboost.presentation.nickname.Mode
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.util.*
-import java.util.Objects.requireNonNull
-import kotlin.reflect.KClass
 
 fun Fragment.showAlert(
     titleResId: Int? = null,
@@ -110,6 +112,36 @@ fun initProgressBar(layoutInflater: LayoutInflater, context: Context): AlertDial
     }
 }
 
+
+fun Fragment.initLottieAnim(
+    layoutInflater: LayoutInflater,
+    context: Context,
+    delayAfterAnimation: Long
+): AlertDialog {
+    val binding = TaskSuccesFullScreenBinding.inflate(layoutInflater)
+    val alert = AlertDialog.Builder(context).apply {
+
+        setView(binding.root)
+        setCancelable(false)
+
+    }.create().apply {
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    }
+    binding.root.addAnimatorListener(object : Animator.AnimatorListener {
+        override fun onAnimationEnd(animation: Animator) {
+            lifecycleScope.launch {
+                delay(delayAfterAnimation)
+                alert.dismiss()
+            }
+        }
+        override fun onAnimationStart(animation: Animator) {}
+        override fun onAnimationCancel(animation: Animator) {}
+        override fun onAnimationRepeat(animation: Animator) {}
+    })
+
+    return alert
+}
+
 fun String.isEmailValid(): Boolean {
     return !TextUtils.isEmpty(this) && android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }
@@ -140,5 +172,13 @@ fun ViewBinding.convertDpToPixels(dp: Int) =
 inline fun <reified T : Serializable> Bundle.getSerializableStable(key: String): T? = when {
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> getSerializable(key, T::class.java)
     else -> @Suppress("DEPRECATION") getSerializable(key) as? T
+}
+
+fun List<CharSequence>.toConsoleOutput(): String {
+    var text = ""
+    this.forEach {
+        text += it.toString() + "\n"
+    }
+    return text
 }
 

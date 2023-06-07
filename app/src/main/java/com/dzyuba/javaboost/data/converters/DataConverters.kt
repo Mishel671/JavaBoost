@@ -1,6 +1,8 @@
 package com.dzyuba.javaboost.data.converters
 
 import com.dzyuba.javaboost.data.firebase.entities.*
+import com.dzyuba.javaboost.domain.entities.LessonDecideItem
+import com.dzyuba.javaboost.domain.entities.LessonDecides
 import com.dzyuba.javaboost.domain.entities.LessonShort
 import com.dzyuba.javaboost.domain.entities.LessonShort.Tags.Companion.toTag
 import com.dzyuba.javaboost.domain.entities.User
@@ -58,6 +60,7 @@ private fun LessonItemFire.toLessonItem() = when (type?.toType()) {
             trueAnswerId = trueAnswerId!!
         )
     }
+
     Type.PRACTICE -> {
         Practice(
             id = id,
@@ -69,6 +72,7 @@ private fun LessonItemFire.toLessonItem() = when (type?.toType()) {
             wasDecided = wasDecided
         )
     }
+
     null -> null
 }
 
@@ -78,4 +82,19 @@ private fun AnswerFire.toAnswer() =
         id = id,
         answer = answer
     )
+
+fun LessonDecidesFire.toLessonDecides() = LessonDecides(
+    id = id,
+    taskCount = taskCount ?: 0,
+    wasRead = wasRead!!,
+    decides = decides?.values?.toList()?.map { it.toLessonDecideItem() }?: listOf()
+//    decides = decides?.map { it.toLessonDecideItem() } ?: listOf()
+)
+
+fun LessonDecideItemFire.toLessonDecideItem() = LessonDecideItem(
+    id = id,
+    type = type!!.toType()!!,
+    wasDecided = wasDecided ?: false,
+    trueAnswerId = answerId
+)
 

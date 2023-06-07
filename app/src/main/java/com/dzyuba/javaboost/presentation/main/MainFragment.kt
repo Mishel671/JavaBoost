@@ -13,7 +13,6 @@ import com.dzyuba.javaboost.databinding.FragmentMainBinding
 import com.dzyuba.javaboost.presentation.ViewModelFactory
 import com.dzyuba.javaboost.presentation.lessons.LessonsListFragment
 import com.dzyuba.javaboost.presentation.profile.ProfileFragment
-import com.dzyuba.javaboost.presentation.signin.SignInViewModel
 import javax.inject.Inject
 
 class MainFragment : Fragment() {
@@ -22,7 +21,7 @@ class MainFragment : Fragment() {
     private val binding: FragmentMainBinding
         get() = _binding ?: throw RuntimeException("FragmentMainBinding == null")
 
-    private val lessonsFragment = LessonsListFragment.allLessons()
+    private val lessonsFragment = LessonsListFragment.newInstance()
     private val profileFragment = ProfileFragment.newInstance()
 
     private val component by lazy {

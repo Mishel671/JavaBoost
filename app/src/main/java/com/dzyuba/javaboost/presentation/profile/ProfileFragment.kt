@@ -14,7 +14,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import com.dzyuba.javaboost.App
@@ -28,10 +27,8 @@ import com.dzyuba.javaboost.presentation.adapter.elements.ItemDividerBig
 import com.dzyuba.javaboost.presentation.adapter.elements.ItemGrayLine
 import com.dzyuba.javaboost.presentation.adapter.elements.ItemHeader
 import com.dzyuba.javaboost.presentation.adapter.elements.ItemTwoTextWithArrow
-import com.dzyuba.javaboost.presentation.lessons.LessonsListFragment
+import com.dzyuba.javaboost.presentation.decided_lessons.DecidedLessonsFragment
 import com.dzyuba.javaboost.presentation.nickname.NicknameFragment
-import com.dzyuba.javaboost.presentation.nickname.NicknameFragment.Companion.EDIT_RESULT_KEY
-import com.dzyuba.javaboost.presentation.nickname.NicknameFragment.Companion.launchEditMode
 import com.dzyuba.javaboost.presentation.signin.SignInFragment
 import com.dzyuba.javaboost.util.*
 import javax.inject.Inject
@@ -152,7 +149,7 @@ class ProfileFragment : Fragment() {
             leftText = getString(R.string.profile_learned_lessons)
             positionType = ItemTwoTextWithArrow.PositionType.SOLO
             onItemClick = {
-                launchScreenReturn(LessonsListFragment.lessonsById(listOf(1, 2)))
+                launchScreenReturn(DecidedLessonsFragment.newInstance())
             }
         })
         add(ItemDividerBig())

@@ -7,13 +7,14 @@ import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ToastUtils
+import com.dzyuba.javaboost.domain.entities.lesson.Practice
 import com.dzyuba.javaboost.presentation.ide.common.utils.Lexer
 import com.xiaoyv.javaengine.JavaEngine
 import com.xiaoyv.javaengine.compile.listener.CompilerListener
 import java.io.File
 import javax.inject.Inject
 
-class EditorViewModel @Inject constructor(): ViewModel() {
+class EditorViewModel @Inject constructor() : ViewModel() {
 
     private val _importText = MutableLiveData<String>()
     val importText: LiveData<String>
@@ -38,6 +39,8 @@ class EditorViewModel @Inject constructor(): ViewModel() {
     private val _showProgress = MutableLiveData<Pair<String, Int>>()
     val showProgress: LiveData<Pair<String, Int>>
         get() = _showProgress
+
+    var practiceDecide : Pair<Long, Boolean>? = null
 
     fun findPackage(selectedText: String, isHide: Boolean) {
         // 若选择的非单词，则跳过
@@ -124,5 +127,4 @@ class EditorViewModel @Inject constructor(): ViewModel() {
                 }
             })
     }
-
 }

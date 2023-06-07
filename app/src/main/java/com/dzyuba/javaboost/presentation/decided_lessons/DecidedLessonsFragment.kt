@@ -1,25 +1,38 @@
-package com.dzyuba.javaboost.presentation.lessons
+package com.dzyuba.javaboost.presentation.decided_lessons
 
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.dzyuba.javaboost.App
 import com.dzyuba.javaboost.R
+import com.dzyuba.javaboost.databinding.FragmentDecidedLessonsBinding
 import com.dzyuba.javaboost.databinding.FragmentLessonsListBinding
 import com.dzyuba.javaboost.presentation.ViewModelFactory
 import com.dzyuba.javaboost.presentation.lesson_detail.LessonDetailFragment
+import com.dzyuba.javaboost.presentation.lessons.LessonsListFragment
+import com.dzyuba.javaboost.presentation.lessons.LessonsListViewModel
+import com.dzyuba.javaboost.presentation.lessons.LessonsShortAdapter
 import com.dzyuba.javaboost.util.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
 
-class LessonsListFragment : Fragment() {
+class DecidedLessonsFragment : Fragment() {
 
-    private var _binding: FragmentLessonsListBinding? = null
-    private val binding: FragmentLessonsListBinding
-        get() = _binding ?: throw RuntimeException("FragmentLessonsListBinding == null")
+    private var _binding: FragmentDecidedLessonsBinding? = null
+    private val binding: FragmentDecidedLessonsBinding
+        get() = _binding ?: throw RuntimeException("FragmentDecidedLessonsBinding == null")
 
     private val dialog by lazy { initProgressBar(layoutInflater, requireContext()) }
 
@@ -29,11 +42,13 @@ class LessonsListFragment : Fragment() {
         (requireActivity().application as App).componentApp
     }
 
+    private val animJob: Job? = null
+
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
     private val viewModel by lazy {
-        ViewModelProvider(this, viewModelFactory)[LessonsListViewModel::class.java]
+        ViewModelProvider(this, viewModelFactory)[DecidedLessonsViewModel::class.java]
     }
 
     override fun onAttach(context: Context) {
@@ -45,15 +60,15 @@ class LessonsListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentLessonsListBinding.inflate(inflater, container, false)
+        _binding = FragmentDecidedLessonsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.loadDecidedLessons()
         setObservers()
         setUI()
-        showNavBar()
     }
 
 
@@ -76,36 +91,37 @@ class LessonsListFragment : Fragment() {
                 }
             }
         }
-    }
+        var oldProgressValue = 0
+        viewModel.lessonsProgress.observe(viewLifecycleOwner) {
+            val animator = ValueAnimator.ofInt(oldProgressValue, it).apply {
+                duration = 1500
+                interpolator = DecelerateInterpolator()
+            }
+            animator.addUpdateListener {
+                if (isVisible) {
+                    val progress = animator.animatedValue.toString().toInt()
+                    binding.progressBar.progress = progress.toFloat()
+                    binding.tvProgress.text = "$progress%"
+                }
+            }
+            oldProgressValue = it
+            animator.start()
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.loadAllLessons()
-    }
-    private fun setUI() {
-        binding.rvLessons.adapter = adapter
-        adapter.onItemClick = {
-            hideNavBar()
-            parentFragmentManager.beginTransaction()
-                .setCustomAnimations(
-                    R.anim.slide_enter_left,
-                    R.anim.slide_exit_left,
-                    R.anim.slide_enter_right,
-                    R.anim.slide_exit_right
-                )
-                .addToBackStack(null)
-                .replace(R.id.bnvFragmentContainer, LessonDetailFragment.newInstance(it))
-                .commit()
         }
     }
 
+    private fun setUI() {
+        binding.rvLessons.adapter = adapter
+    }
+
     override fun onDestroyView() {
-        _binding = null
         super.onDestroyView()
+        _binding = null
     }
 
     companion object {
-        fun newInstance() = LessonsListFragment()
+
+        fun newInstance() = DecidedLessonsFragment()
 
     }
 }

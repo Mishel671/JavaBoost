@@ -45,7 +45,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="15dp"
             android:maxLines="4"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -87,5 +87,15 @@
                 android:src="@drawable/ic_checklist"
                 app:tint="@color/blue" />
         </LinearLayout>
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/pbLessonProgress"
+            android:layout_width="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:progress="40"
+            app:indicatorColor="@color/blue"
+            app:trackColor="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="wrap_content"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

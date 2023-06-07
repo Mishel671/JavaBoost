@@ -75,7 +75,7 @@ sealed class LessonViewHolder(binding: ViewBinding) : ViewHolder(binding.root) {
     }
 
     class TestViewHolder(private val binding: RvTestItemBinding) : LessonViewHolder(binding) {
-        fun bind(test: Test, onClickAnswer: ((Int, Int) -> Unit)) {
+        fun bind(test: Test, onClickAnswer: ((Int, Long) -> Unit)) {
             with(binding) {
                 tvQuestion.text = Html.fromHtml(test.question, FROM_HTML_MODE_COMPACT)
                 rbQuestion1.text = test.answers[0].answer
@@ -124,7 +124,7 @@ sealed class LessonViewHolder(binding: ViewBinding) : ViewHolder(binding.root) {
             }
         }
 
-        private fun RadioGroup.canClick(isClickable:Boolean){
+        private fun RadioGroup.canClick(isClickable: Boolean) {
             binding.rbQuestion1.isClickable = isClickable
             binding.rbQuestion2.isClickable = isClickable
             binding.rbQuestion3.isClickable = isClickable
@@ -132,27 +132,42 @@ sealed class LessonViewHolder(binding: ViewBinding) : ViewHolder(binding.root) {
         }
     }
 
-    class PracticeViewHolder(private val binding: RvPracticeItemBinding) : LessonViewHolder(binding) {
-        fun bind(practice: Practice, onClick: ((Int) -> Unit)? = null) {
-            binding.tvQuestion.text = practice.task
-            if(practice.inputFormat != null){
-                binding.tvInputValuesTitle.visible()
-                binding.tvInputValues.visible()
-                binding.tvInputValues.text = practice.inputFormat
-            }else{
-                binding.tvInputValuesTitle.gone()
-                binding.tvInputValues.gone()
-            }
-            if(practice.outputFormat != null){
-                binding.tvOutputValuesTitle.visible()
-                binding.tvOutputValues.visible()
-                binding.tvOutputValues.text = practice.outputFormat
-            }else{
-                binding.tvOutputValuesTitle.gone()
-                binding.tvOutputValues.gone()
-            }
-            binding.btnPractice.setOnClickListener {
-                onClick?.invoke(practice.id)
+    class PracticeViewHolder(private val binding: RvPracticeItemBinding) :
+        LessonViewHolder(binding) {
+        fun bind(practice: Practice, onClick: ((Long) -> Unit)? = null) {
+            with(binding) {
+                tvQuestion.text = practice.task
+                if (practice.inputFormat != null) {
+                    tvInputValuesTitle.visible()
+                    tvInputValues.visible()
+                    tvInputValues.text = practice.inputFormat
+                } else {
+                    tvInputValuesTitle.gone()
+                    tvInputValues.gone()
+                }
+                if (practice.outputFormat != null) {
+                    tvOutputValuesTitle.visible()
+                    tvOutputValues.visible()
+                    tvOutputValues.text = practice.outputFormat
+                } else {
+                   tvOutputValuesTitle.gone()
+                   tvOutputValues.gone()
+                }
+                btnPractice.setOnClickListener {
+                    onClick?.invoke(practice.id)
+                }
+                if (practice.wasDecided != null) {
+                    ivResult.visible()
+                    if (practice.wasDecided) {
+                        ivResult.setImageResource(R.drawable.ic_succes)
+                        ivResult.setColorFilter(root.context.getColor(R.color.green))
+                    } else {
+                        ivResult.setImageResource(R.drawable.ic_error)
+                        ivResult.setColorFilter(root.context.getColor(R.color.red))
+                    }
+                } else {
+                    ivResult.gone()
+                }
             }
         }
     }

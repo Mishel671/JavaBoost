@@ -55,8 +55,9 @@
     <string name="profile_quit_desc">Подтвердите выход из аккаунта</string>
 
     <!--    Lessons list-->
-    <string name="lessons_list_empty">Уроков не найдено</string>
+    <string name="lessons_list_empty">Тут пока пусто</string>
     <string name="lessons_list_description">Описание:\n%s</string>
+    <string name="progress_percent">%s%</string>
 
     <!--    Lesson detail-->
     <string name="lesson_detail_set_rating">Оцените урок</string>
@@ -82,6 +83,9 @@
     <string name="input_values">Входные данные</string>
     <string name="output_values">Выходные данные</string>
     <string name="go_to_practice">Перейти к практике</string>
+    <string name="task_error">Задание выполнено не до конца</string>
+    <string name="console_output_error">Вывод не соответствует требованиям задания</string>
+    <string name="code_error">Код не соответствует требованиям задания</string>
 
     <!--    Надписи действия/согласия/не согласия-->
     <string name="ok">OK</string>

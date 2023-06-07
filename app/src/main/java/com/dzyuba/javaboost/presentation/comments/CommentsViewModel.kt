@@ -29,7 +29,7 @@ class CommentsViewModel @Inject constructor(
 
     val userId get() = repository.getUserId()
 
-    fun subscribeToComments(lessonId: Int) {
+    fun subscribeToComments(lessonId: Long) {
         if (_lessonList.value == null) {
             _lessonList.value = Resource.loading()
             viewModelScope.launch(Dispatchers.IO) {
@@ -40,7 +40,7 @@ class CommentsViewModel @Inject constructor(
         }
     }
 
-    fun sendComment(lessondId: Int, inputComment: String?) {
+    fun sendComment(lessondId: Long, inputComment: String?) {
         if (commentJob?.isActive != true) {
             val comment = inputComment?.trim() ?: ""
             if (comment.isNotEmpty()) {

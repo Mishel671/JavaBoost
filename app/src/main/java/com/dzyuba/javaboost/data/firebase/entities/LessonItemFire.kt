@@ -3,7 +3,7 @@ package com.dzyuba.javaboost.data.firebase.entities
 import com.dzyuba.javaboost.domain.entities.lesson.Test
 
 data class LessonItemFire(
-    val id: Int = -1,
+    val id: Long = -1,
     val type: String? = null,
     //Header, text, code
     val text: String? = null,

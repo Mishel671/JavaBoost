@@ -13,9 +13,11 @@ import com.dzyuba.javaboost.domain.entities.lesson.*
 
 class LessonAdapter : ListAdapter<LessonItem, LessonViewHolder>(LessonItemCallback) {
 
-    var onAnswerClick: ((Int, Int) -> Unit)? = null
+    var onLastItemView: (() -> Unit)? = null
 
-    var onPracticeClick: ((Int) -> Unit)? = null
+    var onAnswerClick: ((Int, Long) -> Unit)? = null
+
+    var onPracticeClick: ((Long) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LessonViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -74,6 +76,8 @@ class LessonAdapter : ListAdapter<LessonItem, LessonViewHolder>(LessonItemCallba
                 }
             )
         }
+        if (position >= currentList.size - 1)
+            onLastItemView?.invoke()
     }
 
     override fun getItemViewType(position: Int): Int {

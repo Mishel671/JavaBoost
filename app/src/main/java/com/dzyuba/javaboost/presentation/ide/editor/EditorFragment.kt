@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
@@ -24,9 +25,14 @@ import com.blankj.utilcode.util.ToastUtils
 import com.dzyuba.javaboost.R
 import com.dzyuba.javaboost.databinding.FragmentEditorBinding
 import com.dzyuba.javaboost.databinding.FragmentEditorOuputBinding
+import com.dzyuba.javaboost.domain.entities.lesson.Practice
 import com.dzyuba.javaboost.presentation.ide.common.code.SymbolView
 import com.dzyuba.javaboost.presentation.ide.common.utils.Lexer
+import com.dzyuba.javaboost.presentation.ide.console.ConsoleData
 import com.dzyuba.javaboost.presentation.ide.console.ConsoleFragment
+import com.dzyuba.javaboost.presentation.ide.console.ConsoleFragment.Companion.CONSOLE_FRAGMENT_ANSWER
+import com.dzyuba.javaboost.presentation.ide.console.ConsoleFragment.Companion.CONSOLE_FRAGMENT_RESULT
+import com.dzyuba.javaboost.util.getSerializableStable
 import com.xiaoyv.javaengine.JavaEngineSetting
 
 class EditorFragment : Fragment() {
@@ -42,6 +48,10 @@ class EditorFragment : Fragment() {
 
     private val viewModel by lazy {
         ViewModelProvider(this)[EditorViewModel::class.java]
+    }
+
+    private val practice by lazy {
+        arguments?.getSerializableStable<Practice>(PRACTICE_KEY)!!
     }
 
     private var outputDialog: AlertDialog? = null
@@ -60,6 +70,29 @@ class EditorFragment : Fragment() {
         initData()
         setUI()
         setObservers()
+        setFragmentResult()
+    }
+
+    private fun setFragmentResult() {
+        parentFragmentManager.setFragmentResultListener(
+            CONSOLE_FRAGMENT_RESULT, viewLifecycleOwner
+        ) { key, bundle ->
+            val answerPractice =
+                bundle.getSerializableStable<Pair<Long, Boolean>>(CONSOLE_FRAGMENT_ANSWER)
+            viewModel.practiceDecide = answerPractice
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    parentFragmentManager.setFragmentResult(
+                        EDITOR_FRAGMENT_RESULT, bundleOf(
+                            EDITOR_FRAGMENT_ANSWER to viewModel.practiceDecide
+                        )
+                    )
+                    parentFragmentManager.popBackStack()
+                }
+
+            })
     }
 
     private fun setObservers() {
@@ -123,13 +156,6 @@ class EditorFragment : Fragment() {
         binding.editorSymbolView.textBackgroundColor =
             requireContext().getColor(R.color.black_light)
         binding.editorSymbolView.textColor = requireContext().getColor(R.color.white)
-//        KeyboardUtils.registerSoftInputChangedListener(requireActivity().getWindow()) { height ->
-//            val params =
-//                binding.editorSymbolView.getLayoutParams() as ConstraintLayout.LayoutParams
-//            params.bottomMargin = height - ConvertUtils.dp2px(56F)
-//            binding.editorSymbolView.setLayoutParams(params)
-//            binding.editorSymbolView.setVisible(false)
-//        }
         binding.editorEditLayout.setDark(true)
         binding.editorEditLayout.setKeywordColor(requireContext().getColor(R.color.orange))
         binding.editorEditLayout.setTextColor(Color.WHITE)
@@ -148,7 +174,7 @@ class EditorFragment : Fragment() {
                 binding.editorEditLayout.save()
             }
             binding.editorEditLayout.save()
-            viewModel.runFile(binding.editorEditLayout.getFile())
+            viewModel.runFile(binding.editorEditLayout.file)
         }
         binding.ivUndo.setOnClickListener {
             binding.editorEditLayout.undo()
@@ -162,34 +188,6 @@ class EditorFragment : Fragment() {
         KeyboardUtils.unregisterSoftInputChangedListener(requireActivity().getWindow())
         super.onDestroy()
     }
-
-
-//    fun formatCodeFail(exception: FormatterException) {
-//        val diagnostics: List<FormatterDiagnostic> = exception.diagnostics()
-//        if (ObjectUtils.isNotEmpty(diagnostics)) {
-//            val diagnostic: FormatterDiagnostic = diagnostics[0]
-//            val line: Int = diagnostic.line()
-//            val column: Int = diagnostic.column()
-//            var message: String = diagnostic.message()
-//            message = "line:$line\ncolumn:$column\nerror:$message"
-//            val alertDialog = AlertDialog.Builder(activity)
-//                .setTitle("Alignment failed")
-//                .setMessage(message)
-//                .setPositiveButton("Ok") { dialog: DialogInterface?, which: Int ->
-//                    editorEditLayout.gotoLine(line)
-//                    val caretPosition: Int = editorEditLayout.getCaretPosition()
-//                    editorEditLayout.moveCaret(caretPosition + column)
-//                }
-//                .create()
-//            alertDialog.setCanceledOnTouchOutside(false)
-//            alertDialog.show()
-//        }
-//    }
-//
-//    fun formatCodeSuccess(sourceCode: String?) {
-//        editorEditLayout.setText(sourceCode)
-//        editorEditLayout.save()
-//    }
 
     private fun showLog() {
         if (outputDialog == null) {
@@ -262,17 +260,29 @@ class EditorFragment : Fragment() {
         outputDialog!!.setOnDismissListener { dialog: DialogInterface? ->
             parentFragmentManager.beginTransaction()
                 .addToBackStack(null)
-                .add(R.id.fragmentContainer, ConsoleFragment.newInstance(dexPath!!, null))
+                .add(
+                    R.id.fragmentContainer,
+                    ConsoleFragment.newInstance(
+                        ConsoleData(
+                            dexPath!!,
+                            null,
+                            binding.editorEditLayout.text.toString(),
+                            practice
+                        )
+                    )
+                )
                 .commit()
         }
     }
 
     companion object {
+        const val EDITOR_FRAGMENT_RESULT = "EDITOR_FRAGMENT_RESULT"
+        const val EDITOR_FRAGMENT_ANSWER = "EDITOR_FRAGMENT_ANSWER"
 
-        private const val OUTPUT_KEY_WORDS = "OUTPUT_KEY_WORDS"
+        private const val PRACTICE_KEY = "PRACTICE_KEY"
 
-        fun newInstance(outputKeyWords: List<String>) = EditorFragment().apply {
-            arguments = bundleOf(OUTPUT_KEY_WORDS to outputKeyWords)
+        fun newInstance(practice: Practice) = EditorFragment().apply {
+            arguments = bundleOf(PRACTICE_KEY to practice)
         }
 
     }

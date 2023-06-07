@@ -2,7 +2,6 @@ package com.dzyuba.javaboost.presentation.lesson_detail
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +16,10 @@ import com.dzyuba.javaboost.domain.entities.lesson.Practice
 import com.dzyuba.javaboost.presentation.ViewModelFactory
 import com.dzyuba.javaboost.presentation.comments.CommentsFragment
 import com.dzyuba.javaboost.presentation.ide.editor.EditorFragment
+import com.dzyuba.javaboost.presentation.ide.editor.EditorFragment.Companion.EDITOR_FRAGMENT_ANSWER
+import com.dzyuba.javaboost.presentation.ide.editor.EditorFragment.Companion.EDITOR_FRAGMENT_RESULT
 import com.dzyuba.javaboost.presentation.lesson_detail.adapter.LessonAdapter
+import com.dzyuba.javaboost.util.getSerializableStable
 import com.dzyuba.javaboost.util.initProgressBar
 import com.dzyuba.javaboost.util.showAlert
 import com.dzyuba.javaboost.util.showErrorAlert
@@ -29,10 +31,11 @@ class LessonDetailFragment : Fragment() {
     private val binding: FragmentLessonDetailBinding
         get() = _binding ?: throw RuntimeException("FragmentLessonDetailBinding == null")
 
+
     private val dialog by lazy { initProgressBar(layoutInflater, requireContext()) }
 
     private val lessonId by lazy {
-        arguments?.getInt(LESSON_ID_KEY)!!
+        arguments?.getLong(LESSON_ID_KEY)!!
     }
 
     private val lessonAdapter = LessonAdapter()
@@ -63,10 +66,19 @@ class LessonDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.appBar.setExpanded(true)
+        binding.appBar.setExpanded(viewModel.toolbarIsExpanded)
         viewModel.loadLesson(lessonId)
         setObservers()
         setupAdapter()
+        setFragmentResult()
+    }
+
+    private fun setFragmentResult() {
+        parentFragmentManager.setFragmentResultListener(
+            EDITOR_FRAGMENT_RESULT, viewLifecycleOwner) { key, bundle ->
+            val answerPractice = bundle.getSerializableStable<Pair<Long, Boolean>>(EDITOR_FRAGMENT_ANSWER)
+            viewModel.setPracticeAnswer(answerPractice)
+        }
     }
 
     private fun setupAdapter() {
@@ -80,11 +92,14 @@ class LessonDetailFragment : Fragment() {
             setMaxRecycledViews(LessonAdapter.PRACTICE_VIEW, LessonAdapter.PRACTICE_VIEW_COUNT)
         }
         binding.rvLesson.adapter = lessonAdapter
+        lessonAdapter.onLastItemView = {
+            viewModel.setRead()
+        }
         lessonAdapter.onAnswerClick = { answerId, itemId ->
             viewModel.setAnswer(answerId, itemId)
         }
         lessonAdapter.onPracticeClick = { practiceId ->
-            val practice = viewModel.lesson.value?.data?.lessonItems?.get(practiceId) as? Practice
+            val practice = viewModel.lesson.value?.data?.lessonItems?.get(practiceId.toInt()) as? Practice
             practice?.let {
                 parentFragmentManager.beginTransaction()
                     .setCustomAnimations(
@@ -93,7 +108,7 @@ class LessonDetailFragment : Fragment() {
                         R.anim.slide_enter_right,
                         R.anim.slide_exit_right
                     ).addToBackStack(null)
-                    .replace(R.id.bnvFragmentContainer, EditorFragment.newInstance(it.outputKeyWords))
+                    .replace(R.id.bnvFragmentContainer, EditorFragment.newInstance(practice))
                     .commit()
             }
         }
@@ -169,6 +184,7 @@ class LessonDetailFragment : Fragment() {
 
 
     override fun onDestroyView() {
+        viewModel.toolbarIsExpanded = !binding.appBar.isLifted
         _binding = null
         super.onDestroyView()
     }
@@ -176,7 +192,7 @@ class LessonDetailFragment : Fragment() {
     companion object {
         private const val LESSON_ID_KEY = "LESSON_ID_KEY"
 
-        fun newInstance(lessonId: Int) = LessonDetailFragment().apply {
+        fun newInstance(lessonId: Long) = LessonDetailFragment().apply {
             arguments = bundleOf(LESSON_ID_KEY to lessonId)
         }
     }

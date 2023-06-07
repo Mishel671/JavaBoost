@@ -32,7 +32,7 @@ class CommentsFragment : Fragment() {
     private val dialog by lazy { initProgressBar(layoutInflater, requireContext()) }
 
     private val lessonId by lazy {
-        arguments?.getInt(LESSON_ID) ?: throw RuntimeException("Lesson id not put in arguments")
+        arguments?.getLong(LESSON_ID) ?: throw RuntimeException("Lesson id not put in arguments")
     }
 
     private val component by lazy {
@@ -117,7 +117,7 @@ class CommentsFragment : Fragment() {
     companion object {
         private const val LESSON_ID = "LESSON_ID"
 
-        fun newInstance(lessonId: Int) = CommentsFragment().apply {
+        fun newInstance(lessonId: Long) = CommentsFragment().apply {
             arguments = bundleOf(LESSON_ID to lessonId)
         }
     }
